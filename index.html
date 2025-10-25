@@ -15,6 +15,7 @@
             <h1>StockApp Melchisédech - Gestion des Produits</h1>
             <div class="header-actions">
                 <button class="btn btn-secondary" id="show-about-btn">À Propos</button>
+                <button class="btn btn-warning" id="show-purchase-report-btn">Rapport d'Achat</button> 
                 <button class="btn btn-info" id="show-report-btn">Rapport de Vente</button>
                 <button class="btn btn-danger" id="show-sell-btn">Enregistrer une Vente</button>
                 <button class="btn btn-primary" id="show-add-btn">+ Ajouter un Produit</button>
@@ -33,7 +34,7 @@
                         <tr>
                             <th>Nom du Produit</th>
                             <th>Quantité</th>
-                            <th>Prix (€)</th>
+                            <th>Prix Achat (€)</th>
                             <th>Seuil Min</th>
                             <th>Actions</th>
                         </tr>
@@ -81,7 +82,7 @@
                 <div class="alert alert-error" id="sale-error" style="display: none;"></div>
                 <form id="sale-form">
                     <div class="form-group">
-                        <label for="sale-product-id">Produit à vendre</label>
+                        <label for="sale-product-id">Produit Vendu</label>
                         <select id="sale-product-id" required>
                             </select>
                     </div>
@@ -97,6 +98,16 @@
                     </div>
                     
                     <div class="form-group">
+                        <label for="sale-customer-name">Nom du Client (Livraison)</label>
+                        <input type="text" id="sale-customer-name" placeholder="Ex: Jean Dupont (Optionnel)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sale-delivery-address">Adresse de Livraison (Optionnel)</label>
+                        <input type="text" id="sale-delivery-address" placeholder="Ex: 15 Rue de la Victoire, Ville">
+                    </div>
+                    
+                    <div class="form-group">
                         <label for="sale-total-price">Prix Général (Total) (€)</label>
                         <input type="number" id="sale-total-price" readonly value="0.00" step="0.01">
                     </div>
@@ -109,7 +120,7 @@
             </section>
 
             <section id="sale-report-view" class="report-view" style="display: none;">
-                <h2>Rapport de Ventes</h2>
+                <h2>Rapport de Ventes (Revenus)</h2>
                 
                 <div class="report-actions">
                      <button class="btn btn-info" id="print-report-btn">🖨️ Imprimer / Exporter PDF</button>
@@ -120,9 +131,11 @@
                         <tr>
                             <th>Date & Heure</th>
                             <th>Produit</th>
-                            <th>Prix Unitaire Vendu (€)</th>
+                            <th>Prix Unit. Vendu (€)</th>
                             <th>Quantité</th>
                             <th>Total (€)</th>
+                            <th>Client</th>
+                            <th>Adresse de Livraison</th>
                         </tr>
                     </thead>
                     <tbody id="sale-report-tbody">
@@ -136,17 +149,44 @@
                 </p>
             </section>
             
+            <section id="purchase-report-view" class="report-view" style="display: none;">
+                <h2>Rapport des Achats (Dépenses)</h2>
+                
+                <div class="report-actions purchase-report-actions">
+                     <button class="btn btn-info" id="print-purchase-report-btn">🖨️ Imprimer / Exporter PDF</button>
+                </div>
+                
+                <table id="purchase-report-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Heure</th>
+                            <th>Produit</th>
+                            <th>Coût Unitaire Achat (€)</th>
+                            <th>Quantité Achetée</th>
+                            <th>Coût Total (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="purchase-report-tbody">
+                        </tbody>
+                    <tfoot id="purchase-report-tfoot">
+                        </tfoot>
+                </table>
+
+                <p id="empty-purchases-message" class="alert alert-low-stock" style="display: none;">
+                    Aucun achat enregistré pour le moment.
+                </p>
+            </section>
+
             <section id="about-view" class="view" style="display: none;">
                 <h2>À Propos de StockApp Melchisédech</h2>
                 <div class="about-content">
-                    <h3>Informations du Développeur</h3>
+                    <h3>Informations du Développeur / Propriétaire</h3>
                     
                     <p>Cette application de gestion de stock simple a été développée en utilisant HTML, CSS et JavaScript pur (sans framework).</p>
                     
                     <hr>
 
-                    <p class="developer-name">Créé par : Mechack BUKASA L., Ingénieur Civil en Génie Info.</p>
-                    
+                    <p class="developer-name">Créé par : Mechack BUKASA L., Ingénieur Civil en Génie Informatique</p>
                     <p><span class="label-align">Contact</span> : meschacklukengu@gmail.com</p>
                     <p><span class="label-align">Téléphone</span> : (+243) 972 847 505</p>
                     <p><span class="label-align">Version</span> : 1.0.0</p>
@@ -158,7 +198,7 @@
         </main>
 
         <footer>
-            <p>&copy; 2025 StockApp Melchisédech. Tous droits réservés.</p>
+            <p>&copy; 2023 StockApp Melchisédech. Tous droits réservés.</p>
         </footer>
     </div>
     
