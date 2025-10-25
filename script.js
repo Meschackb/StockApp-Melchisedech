@@ -1,8 +1,6 @@
 // script.js
 
-// -----------------------------------------------------------------
 // 1. Initialisation des Sélecteurs DOM et Variables de Stockage
-// -----------------------------------------------------------------
 const STORAGE_KEY_PRODUCTS = 'stock_products';
 const STORAGE_KEY_SALES = 'stock_sales';
 
@@ -41,46 +39,41 @@ const saleReportTfoot = document.getElementById('sale-report-tfoot');
 const emptySalesMessage = document.getElementById('empty-sales-message');
 
 
-// -----------------------------------------------------------------
 // 2. Fonctions de Gestion des Données (LocalStorage)
-// -----------------------------------------------------------------
-
-/** Récupère les produits du localStorage. */
+/** Récupérer les produits du localStorage. */
 const getProducts = () => {
     const productsJson = localStorage.getItem(STORAGE_KEY_PRODUCTS);
     return productsJson ? JSON.parse(productsJson) : [];
 };
 
-/** Sauvegarde les produits dans le localStorage. */
+/** Sauvegarder les produits dans le localStorage. */
 const saveProducts = (products) => {
     localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
 };
 
-/** Récupère les ventes du localStorage. */
+/** Récupérer les ventes du localStorage. */
 const getSales = () => {
     const salesJson = localStorage.getItem(STORAGE_KEY_SALES);
     return salesJson ? JSON.parse(salesJson) : [];
 };
 
-/** Sauvegarde les ventes dans le localStorage. */
+/** Sauvegarder les ventes dans le localStorage. */
 const saveSales = (sales) => {
     localStorage.setItem(STORAGE_KEY_SALES, JSON.stringify(sales));
 };
 
 
-// -----------------------------------------------------------------
 // 3. Fonctions de Gestion de la Vue et du Rendu
-// -----------------------------------------------------------------
 
-/** Gère l'affichage d'une seule vue (Liste, Formulaire, Rapport, À Propos). */
+/** Gérer l'affichage d'une seule vue (Liste, Formulaire, Rapport, À Propos). */
 const showView = (viewName) => {
-    // 1. Cache toutes les vues
+    // 1. Cacher toutes les vues
     Object.values(views).forEach(view => view.style.display = 'none');
     
-    // Définit la couleur de fond du body (gestion par CSS principalement, mais on garde un reset)
+    // Définir la couleur de fond du body (gestion par CSS principalement, mais on garde un reset)
     document.body.style.backgroundColor = 'var(--bg-light)';
 
-    // 2. Affiche la vue demandée
+    // 2. Afficher la vue demandée
     views[viewName].style.display = 'block';
     
     // 3. Actions spécifiques à la vue
@@ -93,7 +86,7 @@ const showView = (viewName) => {
     }
 };
 
-/** Rend la liste des produits dans le tableau HTML. */
+/** Rendre la liste des produits dans le tableau HTML. */
 const renderProductList = () => {
     const products = getProducts();
     productTbody.innerHTML = ''; 
@@ -116,7 +109,7 @@ const renderProductList = () => {
         const row = productTbody.insertRow();
         row.className = isLowStock ? 'low-stock' : '';
 
-        // Insertion des données
+        // Inserer des données
         row.insertCell().textContent = product.name;
         row.insertCell().textContent = product.quantity;
         row.insertCell().textContent = product.price.toFixed(2);
@@ -142,7 +135,7 @@ const renderProductList = () => {
         actionCell.appendChild(deleteBtn);
     });
     
-    // Affichage de l'alerte de stock bas
+    // Afficher de l'alerte de stock bas
     if (lowStockCount > 0) {
         alertContainer.innerHTML = `
             <div class="alert alert-low-stock">
@@ -155,10 +148,7 @@ const renderProductList = () => {
 };
 
 
-// -----------------------------------------------------------------
-// 4. Gestion des Produits (Ajout, Modif, Suppr)
-// -----------------------------------------------------------------
-
+// 4. Gestion des Produits (Ajouter, Modifier, Supprimer)
 /** Prépare et affiche le formulaire pour l'édition ou l'ajout. */
 const editProduct = (id = null) => {
     const products = getProducts();
@@ -186,7 +176,7 @@ const editProduct = (id = null) => {
     showView('productForm');
 };
 
-/** Supprime un produit du localStorage. */
+/** Supprimer un produit du localStorage. */
 const deleteProduct = (id, name) => {
     if (confirm(`Êtes-vous sûr de vouloir supprimer le produit "${name}" ?`)) {
         let products = getProducts();
@@ -196,7 +186,7 @@ const deleteProduct = (id, name) => {
     }
 };
 
-/** Gère la soumission du formulaire d'ajout/modification. */
+/** Gérer la soumission du formulaire d'ajout/modification. */
 productForm.addEventListener('submit', (e) => {
     e.preventDefault();
     
@@ -208,7 +198,7 @@ productForm.addEventListener('submit', (e) => {
     const price = parseFloat(document.getElementById('price').value);
     const minStockLevel = parseInt(document.getElementById('minStockLevel').value);
 
-    // Valide l'unicité du nom (uniquement en mode ajout)
+    // Valider l'unicité du nom (uniquement en mode ajout)
     if (!id && products.some(p => p.name.toLowerCase() === name.toLowerCase())) {
         alert(`Erreur : Le produit "${name}" existe déjà.`);
         return;
@@ -237,11 +227,8 @@ productForm.addEventListener('submit', (e) => {
 });
 
 
-// -----------------------------------------------------------------
 // 5. Gestion des Ventes
-// -----------------------------------------------------------------
-
-/** Calcule et affiche le prix total de la vente. */
+/** Calculer et afficher le prix total de la vente. */
 const calculateSalePrices = () => {
     // Remplacer la virgule par un point pour que parseFloat fonctionne
     let unitPriceString = saleUnitPriceInput.value.replace(',', '.'); 
@@ -251,11 +238,11 @@ const calculateSalePrices = () => {
     
     const totalPrice = unitPrice * quantity;
 
-    // Mise à jour SEULEMENT du Prix Général (Total)
+    // Mise à jour du Prix Général (Total)
     saleTotalPriceInput.value = totalPrice.toFixed(2);
 };
 
-/** Rempli le <select> du formulaire de vente avec les produits disponibles. */
+/** Remplir le <select> du formulaire de vente avec les produits disponibles. */
 const populateSaleProductSelect = () => {
     const products = getProducts();
     saleProductSelect.innerHTML = '<option value="">-- Sélectionner un produit --</option>'; 
@@ -265,7 +252,7 @@ const populateSaleProductSelect = () => {
         option.value = product.id;
         option.textContent = `${product.name} (Stock: ${product.quantity})`;
         
-        // Stocke le prix du produit comme attribut de données pour l'initialisation du champ
+        // Stocker le prix du produit comme attribut de données pour l'initialisation du champ
         option.dataset.price = product.price;
 
         if (product.quantity <= 0) {
@@ -303,7 +290,7 @@ saleQuantityInput.addEventListener('input', calculateSalePrices);
 saleUnitPriceInput.addEventListener('input', calculateSalePrices); 
 
 
-/** Gère la soumission du formulaire de vente. */
+/** Gérer la soumission du formulaire de vente. */
 saleForm.addEventListener('submit', (e) => {
     e.preventDefault();
     saleErrorDiv.style.display = 'none';
@@ -331,7 +318,7 @@ saleForm.addEventListener('submit', (e) => {
         return;
     }
 
-    // 1. Enregistrement de la Vente
+    // 1. Enregistrer de la Vente
     const sales = getSales();
     const sale = {
         id: Date.now().toString(),
@@ -345,7 +332,7 @@ saleForm.addEventListener('submit', (e) => {
     sales.push(sale);
     saveSales(sales);
 
-    // 2. Mise à jour du Stock
+    // 2. Mettre à jour le Stock
     products[productIndex].quantity -= quantitySold;
     saveProducts(products);
 
@@ -353,13 +340,10 @@ saleForm.addEventListener('submit', (e) => {
 });
 
 
-// -----------------------------------------------------------------
 // 6. Gestion du Rapport de Vente
-// -----------------------------------------------------------------
-
-/** Rend le tableau du rapport de vente. */
+/** Rendre le tableau du rapport de vente. */
 const renderSaleReport = () => {
-    // Récupère les ventes et les trie par date descendante
+    // Récupérer les ventes et les trier par date descendante
     const sales = getSales().sort((a, b) => new Date(b.saleDate) - new Date(a.saleDate)); 
     saleReportTbody.innerHTML = '';
     saleReportTfoot.innerHTML = '';
@@ -406,10 +390,7 @@ const renderSaleReport = () => {
 };
 
 
-// -----------------------------------------------------------------
 // 7. Événements Globaux et Démarrage
-// -----------------------------------------------------------------
-
 // Bouton pour Imprimer le Rapport
 document.getElementById('print-report-btn').onclick = () => {
     window.print(); 
