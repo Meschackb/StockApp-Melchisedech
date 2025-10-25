@@ -137,7 +137,7 @@ const renderProductList = () => {
         row.insertCell().textContent = product.price.toFixed(2); // Le prix affiché est le coût d'achat
         row.insertCell().textContent = product.minStockLevel;
 
-        // Celluler des actions 
+        // Cellule des actions 
         const actionCell = row.insertCell();
         
         // Bouton Modifier
@@ -305,7 +305,7 @@ const populateSaleProductSelect = () => {
     // Réinitialiser les champs de prix/quantité et livraison
     saleUnitPriceInput.value = '0.00';
     saleTotalPriceInput.value = '0.00';
-    saleQuantityInput.value = '1'; 
+    saleQuantityInput.value = '0.00'; 
     saleCustomerNameInput.value = '';
     saleDeliveryAddressInput.value = '';
 };
@@ -436,7 +436,7 @@ const renderSaleReport = () => {
     totalRow.appendChild(totalHeader);
     
     const revenueCell = document.createElement('th');
-    revenueCell.textContent = `${totalRevenue.toFixed(2)} €`;
+    revenueCell.textContent = `${totalRevenue.toFixed(2)} USD`;
     totalRow.appendChild(revenueCell);
 };
 
@@ -486,7 +486,7 @@ const renderPurchaseReport = () => {
     totalRow.appendChild(totalHeader);
     
     const costCell = document.createElement('th');
-    costCell.textContent = `${totalExpenditure.toFixed(2)} €`;
+    costCell.textContent = `${totalExpenditure.toFixed(2)} USD`;
     totalRow.appendChild(costCell);
 };
 
@@ -507,7 +507,7 @@ document.getElementById('print-purchase-report-btn').onclick = () => {
 document.getElementById('show-add-btn').onclick = () => editProduct(null);
 document.getElementById('show-sell-btn').onclick = () => showView('saleForm');
 document.getElementById('show-report-btn').onclick = () => showView('saleReport');
-document.getElementById('show-purchase-report-btn').onclick = () => showView('purchaseReport'); // NOUVEL ÉVÉNEMENT
+document.getElementById('show-purchase-report-btn').onclick = () => showView('purchaseReport');
 document.getElementById('show-about-btn').onclick = () => showView('about'); 
 
 // Boutons d'annulation (retour à la liste)
