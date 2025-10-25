@@ -3,6 +3,7 @@
 // 1. Initialisation des Sélecteurs DOM et Variables de Stockage
 const STORAGE_KEY_PRODUCTS = 'stock_products';
 const STORAGE_KEY_SALES = 'stock_sales';
+const STORAGE_KEY_PURCHASES = 'stock_purchases'; // NOUVELLE CLÉ DE STOCKAGE
 
 // Sélectionner les conteneurs de vues
 const views = {
@@ -10,6 +11,7 @@ const views = {
     productForm: document.getElementById('product-form-view'),
     saleForm: document.getElementById('sale-form-view'),
     saleReport: document.getElementById('sale-report-view'),
+    purchaseReport: document.getElementById('purchase-report-view'), // NOUVELLE VUE
     about: document.getElementById('about-view')
 };
 
@@ -29,6 +31,10 @@ const saleProductSelect = document.getElementById('sale-product-id');
 const saleQuantityInput = document.getElementById('sale-quantity');
 const saleErrorDiv = document.getElementById('sale-error');
 
+// sélecteurs pour les infos de livraison
+const saleCustomerNameInput = document.getElementById('sale-customer-name');
+const saleDeliveryAddressInput = document.getElementById('sale-delivery-address');
+
 // Sélecteurs pour le prix unitaire et total
 const saleUnitPriceInput = document.getElementById('sale-unit-price');
 const saleTotalPriceInput = document.getElementById('sale-total-price');
@@ -38,9 +44,14 @@ const saleReportTbody = document.getElementById('sale-report-tbody');
 const saleReportTfoot = document.getElementById('sale-report-tfoot');
 const emptySalesMessage = document.getElementById('empty-sales-message');
 
+// Rapport Achat
+const purchaseReportTbody = document.getElementById('purchase-report-tbody');
+const purchaseReportTfoot = document.getElementById('purchase-report-tfoot');
+const emptyPurchasesMessage = document.getElementById('empty-purchases-message');
+
 
 // 2. Fonctions de Gestion des Données (LocalStorage)
-/** Récupérer les produits du localStorage. */
+/** Récupèrer les produits du localStorage. */
 const getProducts = () => {
     const productsJson = localStorage.getItem(STORAGE_KEY_PRODUCTS);
     return productsJson ? JSON.parse(productsJson) : [];
@@ -62,15 +73,24 @@ const saveSales = (sales) => {
     localStorage.setItem(STORAGE_KEY_SALES, JSON.stringify(sales));
 };
 
+/** Récupèrer les achats du localStorage. */
+const getPurchases = () => {
+    const purchasesJson = localStorage.getItem(STORAGE_KEY_PURCHASES);
+    return purchasesJson ? JSON.parse(purchasesJson) : [];
+};
+
+/** Sauvegarder les achats dans le localStorage. */
+const savePurchases = (purchases) => {
+    localStorage.setItem(STORAGE_KEY_PURCHASES, JSON.stringify(purchases));
+};
+
 
 // 3. Fonctions de Gestion de la Vue et du Rendu
-
 /** Gérer l'affichage d'une seule vue (Liste, Formulaire, Rapport, À Propos). */
 const showView = (viewName) => {
     // 1. Cacher toutes les vues
     Object.values(views).forEach(view => view.style.display = 'none');
     
-    // Définir la couleur de fond du body (gestion par CSS principalement, mais on garde un reset)
     document.body.style.backgroundColor = 'var(--bg-light)';
 
     // 2. Afficher la vue demandée
@@ -78,9 +98,11 @@ const showView = (viewName) => {
     
     // 3. Actions spécifiques à la vue
     if (viewName === 'saleForm') {
-        populateSaleProductSelect(); // Remplir la liste déroulante des produits
+        populateSaleProductSelect(); 
     } else if (viewName === 'saleReport') {
-        renderSaleReport(); // Rendre le rapport de vente
+        renderSaleReport(); 
+    } else if (viewName === 'purchaseReport') { 
+        renderPurchaseReport(); 
     } else if (viewName === 'list') {
         renderProductList();
     }
@@ -109,13 +131,13 @@ const renderProductList = () => {
         const row = productTbody.insertRow();
         row.className = isLowStock ? 'low-stock' : '';
 
-        // Inserer des données
+        // Insérer des données
         row.insertCell().textContent = product.name;
         row.insertCell().textContent = product.quantity;
-        row.insertCell().textContent = product.price.toFixed(2);
+        row.insertCell().textContent = product.price.toFixed(2); // Le prix affiché est le coût d'achat
         row.insertCell().textContent = product.minStockLevel;
 
-        // Cellule des actions 
+        // Celluler des actions 
         const actionCell = row.insertCell();
         
         // Bouton Modifier
@@ -135,7 +157,7 @@ const renderProductList = () => {
         actionCell.appendChild(deleteBtn);
     });
     
-    // Afficher de l'alerte de stock bas
+    // Afficher l'alerte de stock bas
     if (lowStockCount > 0) {
         alertContainer.innerHTML = `
             <div class="alert alert-low-stock">
@@ -149,11 +171,11 @@ const renderProductList = () => {
 
 
 // 4. Gestion des Produits (Ajouter, Modifier, Supprimer)
-/** Prépare et affiche le formulaire pour l'édition ou l'ajout. */
+/** Préparer et afficher le formulaire pour l'édition ou l'ajout. */
 const editProduct = (id = null) => {
     const products = getProducts();
     
-    // Réinitialise le formulaire et l'ID caché
+    // Réinitialiser le formulaire et l'ID caché
     productForm.reset();
     productIdInput.value = '';
     
@@ -178,7 +200,7 @@ const editProduct = (id = null) => {
 
 /** Supprimer un produit du localStorage. */
 const deleteProduct = (id, name) => {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer le produit "${name}" ?`)) {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer le produit "${name}" ? (Cela n'affecte pas les ventes/achats enregistrés)`)) {
         let products = getProducts();
         products = products.filter(p => p.id !== id);
         saveProducts(products);
@@ -208,18 +230,33 @@ productForm.addEventListener('submit', (e) => {
         // Mode Édition
         const index = products.findIndex(p => p.id === id);
         if (index !== -1) {
-            products[index] = { id, name, quantity, price, minStockLevel };
+            // mettre à jour uniquement les métadonnées (prix d'achat, seuil). La quantité sera gérée par une entrée de stock future.
+            products[index] = { id, name, quantity: products[index].quantity, price, minStockLevel };
         }
     } else {
-        // Mode Création
+        // Mode Création (Nouvel Achat initial)
         const newProduct = {
             id: Date.now().toString(), 
             name,
             quantity,
-            price,
+            price, // Prix Unitaire d'Achat
             minStockLevel
         };
         products.push(newProduct);
+        
+        // ENREGISTREMENT DE L'ACHAT INITIAL
+        const purchases = getPurchases();
+        const initialPurchase = {
+            id: Date.now().toString() + '-p', 
+            productId: newProduct.id,
+            productName: newProduct.name,
+            unitCost: price, 
+            quantityBought: quantity,
+            totalCost: price * quantity,
+            purchaseDate: new Date().toISOString()
+        };
+        purchases.push(initialPurchase);
+        savePurchases(purchases);
     }
     
     saveProducts(products); 
@@ -230,7 +267,6 @@ productForm.addEventListener('submit', (e) => {
 // 5. Gestion des Ventes
 /** Calculer et afficher le prix total de la vente. */
 const calculateSalePrices = () => {
-    // Remplacer la virgule par un point pour que parseFloat fonctionne
     let unitPriceString = saleUnitPriceInput.value.replace(',', '.'); 
     const unitPrice = parseFloat(unitPriceString) || 0;
 
@@ -238,7 +274,6 @@ const calculateSalePrices = () => {
     
     const totalPrice = unitPrice * quantity;
 
-    // Mise à jour du Prix Général (Total)
     saleTotalPriceInput.value = totalPrice.toFixed(2);
 };
 
@@ -252,8 +287,9 @@ const populateSaleProductSelect = () => {
         option.value = product.id;
         option.textContent = `${product.name} (Stock: ${product.quantity})`;
         
-        // Stocker le prix du produit comme attribut de données pour l'initialisation du champ
-        option.dataset.price = product.price;
+        // Stocker le prix du produit (prix d'achat + petite marge par défaut)
+        // On utilise le prix d'achat comme base par défaut
+        option.dataset.price = product.price; 
 
         if (product.quantity <= 0) {
             option.disabled = true;
@@ -266,22 +302,25 @@ const populateSaleProductSelect = () => {
     saleErrorDiv.style.display = 'none'; 
     saleForm.reset(); 
     
-    // Initialiser les champs de prix à zéro
+    // Réinitialiser les champs de prix/quantité et livraison
     saleUnitPriceInput.value = '0.00';
     saleTotalPriceInput.value = '0.00';
+    saleQuantityInput.value = '1'; 
+    saleCustomerNameInput.value = '';
+    saleDeliveryAddressInput.value = '';
 };
 
 // Événement 1 : Quand on change de produit : initialise le prix unitaire
 saleProductSelect.addEventListener('change', () => {
     const selectedOption = saleProductSelect.options[saleProductSelect.selectedIndex];
-    // Le prix de vente initial est basé sur le prix d'achat, mais l'utilisateur peut le changer
+    
+    // Le prix de vente est basé sur le prix d'achat enregistré
     const unitPrice = selectedOption && selectedOption.dataset.price 
                       ? parseFloat(selectedOption.dataset.price) 
                       : 0;
 
-    saleUnitPriceInput.value = unitPrice.toFixed(2);
+    saleUnitPriceInput.value = (unitPrice * 1.5).toFixed(2); // Prix par défaut : prix d'achat + 50%
     
-    // Déclencher le calcul du total
     calculateSalePrices();
 });
 
@@ -298,9 +337,12 @@ saleForm.addEventListener('submit', (e) => {
     const productId = saleProductSelect.value;
     const quantitySold = parseInt(saleQuantityInput.value);
     
-    // Nettoyer le prix unitaire saisi par l'utilisateur
     let unitPriceString = saleUnitPriceInput.value.replace(',', '.');
     const unitPriceSold = parseFloat(unitPriceString);
+    
+    const customerName = saleCustomerNameInput.value.trim() || 'Non spécifié';
+    const deliveryAddress = saleDeliveryAddressInput.value.trim() || 'Non spécifiée';
+
 
     if (!productId || quantitySold <= 0 || isNaN(quantitySold) || unitPriceSold <= 0 || isNaN(unitPriceSold)) {
         saleErrorDiv.textContent = "Veuillez vérifier le produit, la quantité et le prix unitaire (doit être un nombre valide).";
@@ -318,7 +360,7 @@ saleForm.addEventListener('submit', (e) => {
         return;
     }
 
-    // 1. Enregistrer de la Vente
+    // 1. Enregistrement de la Vente
     const sales = getSales();
     const sale = {
         id: Date.now().toString(),
@@ -327,12 +369,14 @@ saleForm.addEventListener('submit', (e) => {
         unitPrice: unitPriceSold, 
         quantitySold: quantitySold,
         totalPrice: unitPriceSold * quantitySold, 
-        saleDate: new Date().toISOString()
+        saleDate: new Date().toISOString(),
+        customerName: customerName,
+        deliveryAddress: deliveryAddress
     };
     sales.push(sale);
     saveSales(sales);
 
-    // 2. Mettre à jour le Stock
+    // 2. Mise à jour du Stock
     products[productIndex].quantity -= quantitySold;
     saveProducts(products);
 
@@ -343,7 +387,6 @@ saleForm.addEventListener('submit', (e) => {
 // 6. Gestion du Rapport de Vente
 /** Rendre le tableau du rapport de vente. */
 const renderSaleReport = () => {
-    // Récupérer les ventes et les trier par date descendante
     const sales = getSales().sort((a, b) => new Date(b.saleDate) - new Date(a.saleDate)); 
     saleReportTbody.innerHTML = '';
     saleReportTfoot.innerHTML = '';
@@ -374,12 +417,20 @@ const renderSaleReport = () => {
         row.insertCell().textContent = sale.unitPrice.toFixed(2);
         row.insertCell().textContent = sale.quantitySold;
         row.insertCell().textContent = sale.totalPrice.toFixed(2);
+        
+        // Données de Livraison
+        row.insertCell().textContent = sale.customerName;
+        const displayAddress = sale.deliveryAddress.length > 30 
+                             ? sale.deliveryAddress.substring(0, 30) + '...' 
+                             : sale.deliveryAddress;
+                             
+        row.insertCell().textContent = displayAddress;
     });
 
     // Rendu du pied de tableau (Total)
     const totalRow = saleReportTfoot.insertRow();
     const totalHeader = document.createElement('th');
-    totalHeader.colSpan = 4;
+    totalHeader.colSpan = 4 + 2; // Colspan ajusté pour inclure les 2 colonnes de livraison
     totalHeader.style.textAlign = 'right';
     totalHeader.textContent = 'Revenu Total Généré :';
     totalRow.appendChild(totalHeader);
@@ -390,9 +441,65 @@ const renderSaleReport = () => {
 };
 
 
-// 7. Événements Globaux et Démarrage
-// Bouton pour Imprimer le Rapport
+// 7. Gestion du Rapport d'Achat (NOUVEAU)
+/** Rendre le tableau du rapport d'achat. */
+const renderPurchaseReport = () => {
+    const purchases = getPurchases().sort((a, b) => new Date(b.purchaseDate) - new Date(a.purchaseDate)); 
+    purchaseReportTbody.innerHTML = '';
+    purchaseReportTfoot.innerHTML = '';
+    
+    let totalExpenditure = 0;
+    
+    const reportActions = document.querySelector('.purchase-report-actions'); 
+    
+    if (purchases.length === 0) {
+        emptyPurchasesMessage.style.display = 'block';
+        if (reportActions) reportActions.style.display = 'none';
+        return;
+    }
+    
+    emptyPurchasesMessage.style.display = 'none';
+    if (reportActions) reportActions.style.display = 'block';
+
+    purchases.forEach(purchase => {
+        totalExpenditure += purchase.totalCost;
+
+        const row = purchaseReportTbody.insertRow();
+        
+        // Formatage de la date
+        const date = new Date(purchase.purchaseDate);
+        const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+
+        row.insertCell().textContent = formattedDate;
+        row.insertCell().textContent = purchase.productName;
+        row.insertCell().textContent = purchase.unitCost.toFixed(2);
+        row.insertCell().textContent = purchase.quantityBought;
+        row.insertCell().textContent = purchase.totalCost.toFixed(2);
+    });
+
+    // Rendu du pied de tableau (Total des dépenses)
+    const totalRow = purchaseReportTfoot.insertRow();
+    const totalHeader = document.createElement('th');
+    totalHeader.colSpan = 4;
+    totalHeader.style.textAlign = 'right';
+    totalHeader.textContent = 'Dépense Totale d\'Achat :';
+    totalRow.appendChild(totalHeader);
+    
+    const costCell = document.createElement('th');
+    costCell.textContent = `${totalExpenditure.toFixed(2)} €`;
+    totalRow.appendChild(costCell);
+};
+
+
+// 8. Événements Globaux et Démarrage
+
+// Bouton pour Imprimer le Rapport de Vente
 document.getElementById('print-report-btn').onclick = () => {
+    window.print(); 
+};
+
+// Bouton pour Imprimer le Rapport d'Achat
+document.getElementById('print-purchase-report-btn').onclick = () => {
     window.print(); 
 };
 
@@ -400,6 +507,7 @@ document.getElementById('print-report-btn').onclick = () => {
 document.getElementById('show-add-btn').onclick = () => editProduct(null);
 document.getElementById('show-sell-btn').onclick = () => showView('saleForm');
 document.getElementById('show-report-btn').onclick = () => showView('saleReport');
+document.getElementById('show-purchase-report-btn').onclick = () => showView('purchaseReport'); // NOUVEL ÉVÉNEMENT
 document.getElementById('show-about-btn').onclick = () => showView('about'); 
 
 // Boutons d'annulation (retour à la liste)
