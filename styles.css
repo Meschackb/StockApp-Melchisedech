@@ -1,9 +1,9 @@
 /* styles.css */
 
-/* --- Import Google Fonts --- */
+/* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto:wght@300;400;500&display=swap');
 
-/* --- Variables de Couleurs et Typographie --- */
+/* Variables de Couleurs et Typographie */
 :root {
     /* Couleurs primaires et accents */
     --color-primary-dark: #2c3e50; /* Bleu marine foncé */
@@ -36,7 +36,7 @@
     --font-size-base: 16px;
 }
 
-/* --- Réinitialisation de Base --- */
+/* Réinitialisation de Base */
 * {
     margin: 0;
     padding: 0;
@@ -64,7 +64,7 @@ body {
     transition: all 0.3s ease;
 }
 
-/* --- Typographie --- */
+/* Typographie */
 h1, h2, h3 {
     font-family: var(--font-heading);
     color: var(--color-primary-dark);
@@ -96,7 +96,7 @@ h3 {
     margin-bottom: 15px;
 }
 
-/* --- En-tête de l'application (Boutons de navigation) --- */
+/* En-tête de l'application (Boutons de navigation) */
 .header-actions {
     display: flex;
     flex-wrap: wrap; 
@@ -109,7 +109,7 @@ h3 {
     box-shadow: var(--shadow-light);
 }
 
-/* --- Boutons Génériques --- */
+/* Boutons Génériques */
 .btn {
     padding: 12px 25px;
     text-decoration: none;
@@ -184,7 +184,7 @@ h3 {
     box-shadow: none;
 }
 
-/* --- Vues (Sections principales) --- */
+/* Vues (Sections principales) */
 .view, .form-view, .report-view {
     padding: 30px;
     background: var(--bg-white);
@@ -193,7 +193,7 @@ h3 {
     margin-bottom: 30px;
 }
 
-/* --- Tableau --- */
+/* Tableau */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -245,7 +245,7 @@ td:first-child {
 }
 
 
-/* --- Alertes --- */
+/* Alertes */
 .alert {
     padding: 15px 20px;
     border-radius: 8px;
@@ -268,7 +268,7 @@ td:first-child {
     border: 1px solid #f8d7da;
 }
 
-/* --- Formulaires --- */
+/* Formulaires */
 .form-group {
     margin-bottom: 20px;
 }
@@ -319,7 +319,7 @@ input[readonly] {
     justify-content: center;
 }
 
-/* --- Rapport de Ventes (Spécifique) --- */
+/* Rapport de Ventes (Spécifique) */
 .report-actions {
     text-align: right;
     margin-bottom: 20px;
@@ -327,7 +327,7 @@ input[readonly] {
     border-bottom: var(--border-light);
 }
 
-/* --- Page À Propos --- */
+/* Page À Propos */
 .about-content {
     max-width: 650px;
     margin: 30px auto;
@@ -358,7 +358,7 @@ input[readonly] {
     color: var(--color-primary-dark);
 }
 
-/* --- Footer --- */
+/* Footer */
 footer {
     text-align: center;
     margin-top: 40px;
@@ -369,9 +369,7 @@ footer {
 }
 
 
-/* ----------------------------------------------------------------- */
-/* --- Styles spécifiques à l'impression --- */
-/* ----------------------------------------------------------------- */
+/* Styles spécifiques à l'impression */
 @media print {
     body {
         background-color: white !important;
@@ -430,18 +428,18 @@ footer {
         color: #333 !important;
     }
 
-    /* --- AJOUT POUR ALIGNEMENT DE LA PAGE À PROPOS --- */
+    /* ALIGNEMENT DE LA PAGE À PROPOS */
 
 .about-content .label-align {
-    /* Assure que le span se comporte comme un bloc pour définir la largeur */
+    /* Assurer que le span se comporte comme un bloc pour définir la largeur */
     display: inline-block; 
-    /* Définit une largeur suffisante pour tous les labels */
+    /* Définir une largeur suffisante pour tous les labels */
     width: 90px; 
     /* Optionnel : aligne le texte du label à droite pour rapprocher du double point */
     text-align: right; 
-    /* Ajout d'une petite marge pour que l'espace entre le label et le ":" soit agréable */
+    /* Ajouter une petite marge pour que l'espace entre le label et le ":" soit agréable */
     margin-right: 5px; 
-    /* Rendez le label gras pour le distinguer */
+    /* Rendre le label gras pour le distinguer */
     font-weight: 600;
 }
 }
