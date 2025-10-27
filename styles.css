@@ -1,13 +1,7 @@
-/* styles.css */
-/* ... (Contenu du styles.css inchangé par rapport à la réponse précédente) ... */
-/* Je ne le répète pas ici pour des raisons de concision, utilisez le code complet de styles.css fourni précédemment. */
 
-/* styles.css */
-
-/* --- Import Google Fonts --- */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto:wght@300;400;500&display=swap');
 
-/* --- Variables de Couleurs et Typographie --- */
+/*Variables de Couleurs et Typographie*/
 :root {
     /* Thème professionnel inspiré de Material Design */
     --color-primary-dark: #1e3a5f; /* Bleu foncé pour les titres */
@@ -33,7 +27,7 @@
     --font-body: 'Roboto', sans-serif;
 }
 
-/* --- Réinitialisation de Base --- */
+/*Réinitialisation de Base*/
 * {
     margin: 0;
     padding: 0;
@@ -58,7 +52,7 @@ body {
     box-shadow: var(--shadow-deep);
 }
 
-/* --- Typographie et En-tête --- */
+/*Typographie et En-tête*/
 h1 {
     font-size: 2.5em;
     font-weight: 700;
@@ -91,7 +85,7 @@ h2 .fas {
     font-size: 0.8em;
 }
 
-/* --- Vue À Propos Spécifique (pour coller à l'image) --- */
+/*Vue À Propos Spécifique (pour coller à l'image)*/
 #about-view h2 {
     text-align: center;
     border-bottom: none;
