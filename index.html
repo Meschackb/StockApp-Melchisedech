@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StockApp Melchisédech - Gestion Avancée</title>
+    <title>StockApp Melchisédech</title>
     <link rel="stylesheet" href="styles.css">
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
@@ -53,17 +53,17 @@
                     <div class="kpi-card">
                         <i class="fas fa-euro-sign kpi-icon"></i>
                         <h3>Revenu Total (Ventes)</h3>
-                        <p id="kpi-revenue" class="kpi-value">0.00 €</p>
+                        <p id="kpi-revenue" class="kpi-value">0.00 $</p>
                     </div>
                     <div class="kpi-card">
                         <i class="fas fa-dollar-sign kpi-icon"></i>
                         <h3>Coût d'Achat Total</h3>
-                        <p id="kpi-cost" class="kpi-value">0.00 €</p>
+                        <p id="kpi-cost" class="kpi-value">0.00 $</p>
                     </div>
                     <div class="kpi-card primary-kpi">
                         <i class="fas fa-piggy-bank kpi-icon"></i>
                         <h3>Marge Brute</h3>
-                        <p id="kpi-profit" class="kpi-value">0.00 €</p>
+                        <p id="kpi-profit" class="kpi-value">0.00 $</p>
                     </div>
                     <div class="kpi-card">
                         <i class="fas fa-cubes kpi-icon"></i>
@@ -84,7 +84,7 @@
                         <tr>
                             <th>Nom du Produit</th>
                             <th>Quantité</th>
-                            <th>Prix Achat (€)</th>
+                            <th>Prix Achat ($)</th>
                             <th>Seuil Min</th>
                             <th>Actions</th>
                         </tr>
@@ -92,12 +92,12 @@
                     <tbody id="product-tbody"></tbody>
                 </table>
                 <p id="empty-stock-message" class="alert alert-low-stock" style="display: none;">
-                    Aucun produit en stock. Ajoutez-en un pour commencer !
+                    Aucun produit en stock. Ajoutez-en un pour commencer, svp !
                 </p>
             </section>
 
             <section id="product-form-view" class="form-view" style="display: none;">
-                <h2 id="form-title"><i class="fas fa-edit"></i> Ajouter un Nouveau Produit (Métadonnées)</h2>
+                <h2 id="form-title"><i class="fas fa-edit"></i> Ajouter un Nouveau Produit </h2>
                 <form id="product-form">
                     <input type="hidden" id="product-id"> 
                     <div class="form-group">
@@ -105,7 +105,7 @@
                         <input type="text" id="name" required>
                     </div>
                     <div class="form-group">
-                        <label for="price">Prix Unitaire d'Achat Standard (€) / Coût</label>
+                        <label for="price">Prix Unitaire d'Achat ($) / Coût</label>
                         <input type="number" id="price" required min="0.01" step="0.01" value="0.01">
                     </div>
                     
@@ -115,7 +115,7 @@
                     </div>
 
                     <div class="form-group" id="global-cost-group">
-                        <label for="globalCost">Coût Global de l'Achat (€)</label>
+                        <label for="globalCost">Coût Global de l'Achat ($)</label>
                         <input type="number" id="globalCost" readonly value="0.00" step="0.01">
                     </div>
                     
@@ -139,7 +139,7 @@
                         <select id="purchase-product-id" required></select>
                     </div>
                     <div class="form-group">
-                        <label for="purchase-unit-cost">Coût Unitaire Réel d'Achat (€)</label>
+                        <label for="purchase-unit-cost">Coût Unitaire Réel d'Achat ($)</label>
                         <input type="number" id="purchase-unit-cost" required value="0.00" step="0.01" min="0.01">
                     </div>
                     <div class="form-group">
@@ -151,7 +151,7 @@
                         <input type="text" id="purchase-supplier" placeholder="Ex: Marchand X ou usine Y (Optionnel)">
                     </div>
                     <div class="form-group">
-                        <label for="purchase-total-cost">Coût Total de l'Achat (€)</label>
+                        <label for="purchase-total-cost">Coût Total de l'Achat ($)</label>
                         <input type="number" id="purchase-total-cost" readonly value="0.00" step="0.01">
                     </div>
                     <div class="form-actions">
@@ -170,7 +170,7 @@
                         <select id="sale-product-id" required></select>
                     </div>
                     <div class="form-group">
-                        <label for="sale-unit-price">Prix Unitaire de Vente (€)</label>
+                        <label for="sale-unit-price">Prix Unitaire de Vente ($)</label>
                         <input type="number" id="sale-unit-price" required value="0.00" step="0.01">
                     </div>
                     <div class="form-group">
@@ -186,7 +186,7 @@
                         <input type="text" id="sale-delivery-address" placeholder="Ex: 15 Rue de la Victoire, Mbujimayi">
                     </div>
                     <div class="form-group">
-                        <label for="sale-total-price">Prix Général (Total) (€)</label>
+                        <label for="sale-total-price">Prix Général (Total) ($)</label>
                         <input type="number" id="sale-total-price" readonly value="0.00" step="0.01">
                     </div>
                     <div class="form-actions">
@@ -199,14 +199,14 @@
             <section id="sale-report-view" class="report-view" style="display: none;">
                 <h2><i class="fas fa-file-invoice-dollar"></i> Rapport de Ventes</h2>
                 <div class="report-actions"><button class="btn btn-info" id="print-report-btn">🖨️ Imprimer / Exporter PDF</button></div>
-                <table id="sale-report-table"><thead><tr><th>Date & Heure</th><th>Produit</th><th>Prix Unit. Vendu (€)</th><th>Quantité</th><th>Total Vente (€)</th><th>Client</th><th>Adresse de Livraison</th></tr></thead><tbody id="sale-report-tbody"></tbody><tfoot id="sale-report-tfoot"></tfoot></table>
+                <table id="sale-report-table"><thead><tr><th>Date & Heure</th><th>Produit</th><th>Prix Unit. Vendu ($)</th><th>Quantité</th><th>Total Vente ($)</th><th>Client</th><th>Adresse de Livraison</th></tr></thead><tbody id="sale-report-tbody"></tbody><tfoot id="sale-report-tfoot"></tfoot></table>
                 <p id="empty-sales-message" class="alert alert-low-stock" style="display: none;">Aucune vente enregistrée.</p>
             </section>
             
             <section id="purchase-report-view" class="report-view" style="display: none;">
                 <h2><i class="fas fa-file-invoice"></i> Rapport des Achats</h2>
                 <div class="report-actions purchase-report-actions"><button class="btn btn-info" id="print-purchase-report-btn">🖨️ Imprimer / Exporter PDF</button></div>
-                <table id="purchase-report-table"><thead><tr><tr><th>Date & Heure</th><th>Produit</th><th>Coût Unitaire Achat (€)</th><th>Quantité Achetée</th><th>Coût Total Achat (€)</th><th>Fournisseur</th></tr></tr></thead><tbody id="purchase-report-tbody"></tbody><tfoot id="purchase-report-tfoot"></tfoot></table>
+                <table id="purchase-report-table"><thead><tr><tr><th>Date & Heure</th><th>Produit</th><th>Coût Unitaire Achat ($)</th><th>Quantité Achetée</th><th>Coût Total Achat ($)</th><th>Fournisseur</th></tr></tr></thead><tbody id="purchase-report-tbody"></tbody><tfoot id="purchase-report-tfoot"></tfoot></table>
                 <p id="empty-purchases-message" class="alert alert-low-stock" style="display: none;">Aucun achat enregistré.</p>
             </section>
             
